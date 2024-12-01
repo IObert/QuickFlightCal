@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# QuickFlightCal ✈️  
+Easily generate calendar links for your flights! Enter your flight details and create calendar entries in just a few clicks. Supports multiple flight legs and seamless integration with popular calendar apps.
 
-## Getting Started
+## Features 🚀  
+- **Quick and Simple**: Input flight details to get downloadable calendar links.  
+- **Multi-Leg Flights**: Add multiple flight legs for your trips.  
+- **Calendar Compatibility**: Works with Google Calendar, Outlook, iCal, and more.  
+- **Open Source**: Contribute and customize!  
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Getting Started 🔧  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Prerequisites  
+- [Node.js](https://nodejs.org/) installed on your machine  
+- A modern web browser  
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Installation  
+1. Clone the repository:  
+   ```bash
+   git clone https://github.com/iobert/QuickFlightCal.git
+   cd QuickFlightCal
+   ```  
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. Install dependencies:  
+   ```bash
+   pnpm install
+   ```  
 
-## Learn More
+3. Start the development server:  
+   ```bash
+   pnpm start
+   ```  
 
-To learn more about Next.js, take a look at the following resources:
+4. Open the app in your browser:  
+   ```
+   http://localhost:3000
+   ```  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Usage 📝  
+1. Enter your flight details: airline, flight number and date.
+2. Add multiple flight legs if needed.  
+3. Generate calendar links.  
+4. Download or copy the link to add to your calendar app.  
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing 🤝  
+We welcome contributions! To contribute:  
+1. Fork the repository.  
+3. Make your changes and commit.
+4. Push to your fork.
+5. Submit a pull request!  
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+---
+
+## License 📜  
+This project is licensed under the MIT License. 
+
+---
+
+## Feedback & Support 💬  
+Have questions or feedback? Open an issue in this repo.  
+
+Happy travels! 🛫  
+

@@ -83,14 +83,14 @@ export default function FlightCalendarLinks() {
   };
 
   return (
-    <div className="container lg:my-16 my-4 mx-auto p-4 max-w-md">
+    <div className="container lg:my-16 my-8 mx-auto p-4 max-w-md">
       <h1 className="text-2xl font-bold mb-4">
         Flight Calendar Links Generator
       </h1>
-      <span className="text-gray-600 my-10">
+      <div className="text-gray-600 my-10 bg-slate-300 p-2  rounded-md">
         Enter your flight information to generate calendar links. You can also
         add multiple flight legs.
-      </span>
+      </div>
       <div className="my-10">
         <div className="my-2">
           <Label htmlFor="date">Flight Date</Label>
