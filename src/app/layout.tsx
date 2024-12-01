@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,7 +29,7 @@ export default function RootLayout({
               Report issues
             </a>
           </span>
-          {children}
+          <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         </body>
       </TooltipProvider>
     </html>

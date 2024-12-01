@@ -225,14 +225,13 @@ export default function FlightCalendarLinks() {
         </Button>
         {/* {error && <p className="text-red-500">{error}</p>} */}
         {/* @ts-ignore invalid since null is catched */}
-
         <div className="space-y-4">
           {flightInfos.map((flightInfo, index) => (
             <div key={index}>
               {/* @ts-ignore fix for nicer types later */}
               {flightInfo?.type === "PARSE_ERROR" ? (
-                // @ts-ignore fix for nicer types later
                 <div className="bg-red-400 rounded-lg text-center p-4">
+                  {/* @ts-ignore fix for nicer types later */}
                   {flightInfo.message}
                 </div>
               ) : (
