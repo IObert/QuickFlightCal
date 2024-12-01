@@ -5,7 +5,7 @@ export function generateCalendarLinks(flightLegs: FlightLeg[]) {
   const utcDepartureTime = flightLegs[0].departureTime.toUTCString();
   const startDate = format(utcDepartureTime, "yyyyMMdd'T'HHmmss");
   const endDate = format(
-    addMinutes(utcDepartureTime, flightLegs[0].duration), //TODO fix when multiple legs
+    flightLegs[flightLegs.length - 1].arrivalTime,
     "yyyyMMdd'T'HHmmss"
   );
 
@@ -23,7 +23,7 @@ export function generateCalendarLinks(flightLegs: FlightLeg[]) {
     .join("\n");
 
   eventDescription +=
-    "\n\n\nGenerated with 💙 by Flight Calendar Links Generator\n";
+    "\n\n\n\nGenerated with 💙 by QuickFlightCal ✈️ \n\n Generate calendar links for your flights";
 
   const googleLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
     eventTitle

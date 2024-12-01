@@ -55,9 +55,18 @@ export default function FlightCalendarLinks() {
 
     const flightDate = formState.date;
 
+    let legStartDate = flightDate;
     const newFlightInfos = formState.flightInputs
       .filter((input) => input.trim() !== "")
-      .map((input) => parseFlightInfo(input.trim(), flightDate));
+      .map((input) => {
+        const flightInfo = parseFlightInfo(input, legStartDate);
+        // @ts-ignore fix for nicer types later
+        if (flightInfo.type !== "PARSE_ERROR") {
+          // @ts-ignore fix for nicer types later
+          legStartDate = flightInfo.arrivalTime;
+        }
+        return flightInfo;
+      });
 
     setFlightInfos(newFlightInfos);
     // @ts-ignore fix for nicer types later

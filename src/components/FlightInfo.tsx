@@ -12,12 +12,9 @@ export function FlightInfo({ flightLeg }: { flightLeg: FlightLeg }) {
         <span className="text-sm">
           {format(flightLeg.departureTime, "HH:mm z")}
         </span>
-        {format(flightLeg.departureTime, "eee") !==
-          format(arrivalTime, "eee") && (
-          <span className="text-xs">
-            {format(flightLeg.departureTime, "eee")}
-          </span>
-        )}
+        <span className="text-xs">
+          {format(flightLeg.departureTime, "eee")}
+        </span>
       </div>
       <div className="flex flex-col items-center">
         <span className="text-sm font-semibold">
@@ -28,10 +25,7 @@ export function FlightInfo({ flightLeg }: { flightLeg: FlightLeg }) {
       <div className="flex flex-col items-center">
         <span className="text-2xl font-bold">{flightLeg.arrivalAirport}</span>
         <span className="text-sm">{format(arrivalTime, "HH:mm z")}</span>
-        {format(flightLeg.departureTime, "eee") !==
-          format(arrivalTime, "eee") && (
-          <span className="text-xs">{format(arrivalTime, "eee")}</span>
-        )}
+        <span className="text-xs">{format(arrivalTime, "eee")}</span>
       </div>
     </div>
   );

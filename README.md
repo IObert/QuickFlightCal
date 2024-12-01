@@ -29,7 +29,7 @@ Easily generate calendar links for your flights! Enter your flight details and c
 
 3. Start the development server:  
    ```bash
-   pnpm start
+   pnpm dev
    ```  
 
 4. Open the app in your browser:  

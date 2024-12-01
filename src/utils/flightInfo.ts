@@ -29,9 +29,9 @@ const routes = [
     flightNumber: "LH2303",
     number: 2305,
     departureAirport: "AMS",
-    departureTime: "12:45",
+    departureTime: "10:00",
     arrivalAirport: "MUC",
-    arrivalTime: "14:05",
+    arrivalTime: "11:20",
     duration: 80,
   },
   {
