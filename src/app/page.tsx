@@ -23,10 +23,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format, set } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { useSearchParams, useRouter } from "next/navigation";
-import { el } from "date-fns/locale";
 
 interface FormState {
-  date: Date | undefined;
+  date: Date;
   flightInputs: string[];
 }
 
@@ -43,50 +42,49 @@ export default function FlightCalendarLinks() {
   });
 
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [flightLegs, setFlightLegs] = useState<
+  const [flightInfos, setFlightInfos] = useState<
     ReturnType<typeof parseFlightInfo>[]
   >([]);
   const [links, setLinks] = useState<ReturnType<
     typeof generateCalendarLinks
   > | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const validateAndGenerateLinks = () => {
-    setError(null);
-    setFlightLegs([]);
+    setFlightInfos([]);
     setLinks(null);
 
-    if (!formState.date) {
-      setError("Please select a date");
-      return;
-    }
+    const flightDate = formState.date;
 
-    const flightDate = new Date(formState.date);
-    if (isNaN(flightDate.getTime())) {
-      setError("Invalid date");
-      return;
-    }
-
-    const newFlightLegs = formState.flightInputs
+    const newFlightInfos = formState.flightInputs
       .filter((input) => input.trim() !== "")
-      .map((input) => parseFlightInfo(input.trim(), flightDate))
-      .filter((leg): leg is NonNullable<typeof leg> => leg !== null);
+      .map((input) => parseFlightInfo(input.trim(), flightDate));
 
-    if (newFlightLegs.length === 0) {
-      setError("No valid flight numbers entered");
-      return;
+    setFlightInfos(newFlightInfos);
+    // @ts-ignore fix for nicer types later
+    if (!newFlightInfos.some((flight) => flight?.type === "PARSE_ERROR")) {
+      // @ts-ignore fix for nicer types later
+      const newLinks = generateCalendarLinks(newFlightInfos);
+      setLinks(newLinks);
+    } else {
+      setLinks(null);
     }
-
-    setFlightLegs(newFlightLegs);
-    const newLinks = generateCalendarLinks(newFlightLegs);
-    setLinks(newLinks);
   };
 
   return (
     <div className="container lg:my-16 my-8 mx-auto p-4 max-w-md">
-      <h1 className="text-2xl font-bold mb-4">
-        Flight Calendar Links Generator
-      </h1>
+      <div
+        className="text-center mb-4 cursor-pointer"
+        onClick={() => {
+          setFormState({
+            date: new Date(),
+            flightInputs: [""],
+          });
+          router.push("/");
+        }}
+      >
+        <h1 className="text-2xl font-bold ">QuickFlightCal ✈️</h1>
+        <h2 className="text-lg">Generate calendar links for your flights</h2>
+      </div>
       <div className="text-gray-600 my-10 bg-slate-300 p-2  rounded-md">
         Enter your flight information to generate calendar links. You can also
         add multiple flight legs.
@@ -134,7 +132,7 @@ export default function FlightCalendarLinks() {
                     setCalendarOpen(false);
                     setFormState({
                       ...formState,
-                      date,
+                      date: date ? date : new Date(),
                     });
                   }}
                   initialFocus
@@ -180,14 +178,21 @@ export default function FlightCalendarLinks() {
                       className="hover:text-red"
                       variant="ghost"
                       size="icon"
-                      onClick={() =>
+                      onClick={() => {
+                        const newFlightInputs = formState.flightInputs.filter(
+                          (_, i) => i !== index
+                        );
+                        const newParams = new URLSearchParams(
+                          searchParams.toString()
+                        );
+                        newParams.set("flights", newFlightInputs.join(","));
+                        router.push(`?${newParams.toString()}`);
+
                         setFormState({
                           ...formState,
-                          flightInputs: formState.flightInputs.filter(
-                            (_, i) => i !== index
-                          ),
-                        })
-                      }
+                          flightInputs: newFlightInputs,
+                        });
+                      }}
                     >
                       <CircleXIcon />
                     </Button>
@@ -218,9 +223,25 @@ export default function FlightCalendarLinks() {
         <Button className="w-full my-2" onClick={validateAndGenerateLinks}>
           Generate Links
         </Button>
-        {error && <p className="text-red-500">{error}</p>}
+        {/* {error && <p className="text-red-500">{error}</p>} */}
         {/* @ts-ignore invalid since null is catched */}
-        {flightLegs.length > 0 && <FlightInfo flightLegs={flightLegs} />}
+
+        <div className="space-y-4">
+          {flightInfos.map((flightInfo, index) => (
+            <div key={index}>
+              {/* @ts-ignore fix for nicer types later */}
+              {flightInfo?.type === "PARSE_ERROR" ? (
+                // @ts-ignore fix for nicer types later
+                <div className="bg-red-400 rounded-lg text-center p-4">
+                  {flightInfo.message}
+                </div>
+              ) : (
+                // @ts-ignore fix for nicer types later
+                <FlightInfo flightLeg={flightInfo} />
+              )}
+            </div>
+          ))}
+        </div>
         {links && (
           <>
             <Separator className="my-4" />

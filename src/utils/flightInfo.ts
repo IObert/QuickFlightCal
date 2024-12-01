@@ -6,10 +6,10 @@ export interface FlightLeg {
   flightNumber: string;
   number: number;
   departureAirport: string;
-  arrivalAirport: string; 
+  arrivalAirport: string;
   departureTime: Date;
   duration: number; // in minutes
-  arrivalTime: Date; 
+  arrivalTime: Date;
   // dayChange?: number;
 }
 
@@ -46,10 +46,15 @@ const routes = [
   },
 ];
 
+interface ParseError {
+  type: "PARSE_ERROR";
+  message: string;
+}
+
 export function parseFlightInfo(
   flightNumber: string,
   date: Date
-): FlightLeg | null {
+): FlightLeg | ParseError {
   const regex = /^([A-Z]{2,3})(\d{1,4})$/;
 
   flightNumber = flightNumber.toUpperCase().replace(/\s/g, "");
@@ -60,13 +65,14 @@ export function parseFlightInfo(
     Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
   );
 
-  if (!match) return null;
+  if (!match) return { type: "PARSE_ERROR", message: "Invalid flight number" };
 
   const [, airline, number] = match;
 
   const route = routes.find((route) => route.flightNumber === flightNumber);
 
-  if (!route) return null;
+  if (!route)
+    return { type: "PARSE_ERROR", message: `Flight ${flightNumber} not found` };
 
   const [hours, minutes] = route.departureTime.split(":");
   const departureTime = addHours(
