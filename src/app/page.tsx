@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { generateCalendarLinks } from "../utils/calendarLinks";
 import { parseFlightInfo } from "../utils/flightInfo";
 import { FlightInfo } from "../components/FlightInfo";
-import { CalendarIcon, Circle, CircleXIcon } from "lucide-react";
+import { CalendarIcon, CircleXIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -20,11 +20,29 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
+import { Separator } from "@/components/ui/separator";
+import { useSearchParams, useRouter } from "next/navigation";
+import { el } from "date-fns/locale";
+
+interface FormState {
+  date: Date | undefined;
+  flightInputs: string[];
+}
 
 export default function FlightCalendarLinks() {
-  const [date, setDate] = useState<Date | undefined>(new Date())
-  const [flightInputs, setFlightInputs] = useState([""]);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const urlDate = searchParams.get("date"),
+    urlFlights = searchParams.get("flights");
+
+  const [formState, setFormState] = useState<FormState>({
+    date: urlDate ? new Date(urlDate) : new Date(),
+    flightInputs: urlFlights ? urlFlights.split(",") : [""],
+  });
+
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [flightLegs, setFlightLegs] = useState<
     ReturnType<typeof parseFlightInfo>[]
   >([]);
@@ -38,18 +56,18 @@ export default function FlightCalendarLinks() {
     setFlightLegs([]);
     setLinks(null);
 
-    if (!date) {
+    if (!formState.date) {
       setError("Please select a date");
       return;
     }
 
-    const flightDate = new Date(date);
+    const flightDate = new Date(formState.date);
     if (isNaN(flightDate.getTime())) {
       setError("Invalid date");
       return;
     }
 
-    const newFlightLegs = flightInputs
+    const newFlightLegs = formState.flightInputs
       .filter((input) => input.trim() !== "")
       .map((input) => parseFlightInfo(input.trim(), flightDate))
       .filter((leg): leg is NonNullable<typeof leg> => leg !== null);
@@ -62,16 +80,6 @@ export default function FlightCalendarLinks() {
     setFlightLegs(newFlightLegs);
     const newLinks = generateCalendarLinks(newFlightLegs);
     setLinks(newLinks);
-  };
-
-  const addFlightLeg = () => {
-    setFlightInputs([...flightInputs, ""]);
-  };
-
-  const updateFlightLeg = (index: number, value: string) => {
-    const newFlightInputs = [...flightInputs];
-    newFlightInputs[index] = value;
-    setFlightInputs(newFlightInputs);
   };
 
   return (
@@ -87,31 +95,55 @@ export default function FlightCalendarLinks() {
         <div className="my-2">
           <Label htmlFor="date">Flight Date</Label>
           <div>
-            <Popover>
+            <Popover
+              open={calendarOpen}
+              onOpenChange={() => {
+                setCalendarOpen(!calendarOpen);
+              }}
+            >
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
                   className={cn(
                     "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
+                    !formState.date && "text-muted-foreground"
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {date ? format(date, "PPP") : <span>Pick a date</span>}
+                  {formState.date ? (
+                    format(formState.date, "PPP")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0">
                 <Calendar
                   mode="single"
-                  selected={date}
-                  onSelect={setDate}
+                  selected={formState.date}
+                  onSelect={(date) => {
+                    const newParams = new URLSearchParams(
+                      searchParams.toString()
+                    );
+                    if (date) {
+                      newParams.set("date", format(date, "yyyy-MM-dd"));
+                    } else {
+                      newParams.delete("date");
+                    }
+                    router.push(`?${newParams.toString()}`);
+                    setCalendarOpen(false);
+                    setFormState({
+                      ...formState,
+                      date,
+                    });
+                  }}
                   initialFocus
                 />
               </PopoverContent>
             </Popover>
           </div>
         </div>
-        {flightInputs.map((input, index) => (
+        {formState.flightInputs.map((input, index) => (
           <div className="my-2" key={index}>
             <Label htmlFor={`flight-${index}`}>
               Flight Number (e.g., LH 458)
@@ -120,7 +152,25 @@ export default function FlightCalendarLinks() {
               <Input
                 id={`flight-${index}`}
                 value={input}
-                onChange={(e) => updateFlightLeg(index, e.target.value)}
+                onChange={(e) => {
+                  const newFlightInputs = [...formState.flightInputs];
+                  newFlightInputs[index] = e.target.value;
+                  const newParams = new URLSearchParams(
+                    searchParams.toString()
+                  );
+                  newParams.set("flights", newFlightInputs.join(","));
+                  router.push(`?${newParams.toString()}`);
+
+                  setFormState({
+                    ...formState,
+                    flightInputs: newFlightInputs,
+                  });
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    validateAndGenerateLinks();
+                  }
+                }}
                 placeholder="e.g. LH 458"
               />
               {index > 0 && (
@@ -131,9 +181,12 @@ export default function FlightCalendarLinks() {
                       variant="ghost"
                       size="icon"
                       onClick={() =>
-                        setFlightInputs(
-                          flightInputs.filter((_, i) => i !== index)
-                        )
+                        setFormState({
+                          ...formState,
+                          flightInputs: formState.flightInputs.filter(
+                            (_, i) => i !== index
+                          ),
+                        })
                       }
                     >
                       <CircleXIcon />
@@ -148,7 +201,17 @@ export default function FlightCalendarLinks() {
         <Button
           className="w-full mt-6 mb-4 "
           variant="outline"
-          onClick={addFlightLeg}
+          onClick={() => {
+            const newParams = new URLSearchParams(searchParams.toString());
+            const flightInputs = [...formState.flightInputs];
+            flightInputs.push("");
+            newParams.set("flights", flightInputs.join(","));
+            router.push(`?${newParams.toString()}`);
+            setFormState({
+              ...formState,
+              flightInputs,
+            });
+          }}
         >
           Add Another Flight
         </Button>
@@ -156,33 +219,37 @@ export default function FlightCalendarLinks() {
           Generate Links
         </Button>
         {error && <p className="text-red-500">{error}</p>}
+        {/* @ts-ignore invalid since null is catched */}
         {flightLegs.length > 0 && <FlightInfo flightLegs={flightLegs} />}
         {links && (
-          <div className="space-y-2">
-            <Button asChild className="w-full">
-              <a
-                href={links.googleLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Add to Google Calendar
-              </a>
-            </Button>
-            <Button asChild className="w-full">
-              <a
-                href={links.outlookLink}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Add to Outlook
-              </a>
-            </Button>
-            <Button asChild className="w-full">
-              <a href={links.icalLink} download="flight.ics">
-                Download iCal/ICS
-              </a>
-            </Button>
-          </div>
+          <>
+            <Separator className="my-4" />
+            <div className="space-y-2">
+              <Button asChild className="w-full">
+                <a
+                  href={links.googleLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Add to Google Calendar
+                </a>
+              </Button>
+              <Button asChild className="w-full">
+                <a
+                  href={links.outlookLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Add to Outlook
+                </a>
+              </Button>
+              <Button asChild className="w-full">
+                <a href={links.icalLink} download="flight.ics">
+                  Download iCal/ICS
+                </a>
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </div>
