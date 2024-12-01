@@ -229,6 +229,12 @@ export function parseFlightInfo(
     parseInt(hours)
   );
 
+  const departeOnNextDay = date.getTime() > departureTime.getTime();
+
+  if (departeOnNextDay){
+    departureTime.setDate(departureTime.getDate() + 1);
+  }
+
   const arrivalTime = addMinutes(departureTime, route.duration);
 
   return {

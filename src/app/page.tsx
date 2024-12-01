@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import { Separator } from "@/components/ui/separator";
 import { useSearchParams, useRouter } from "next/navigation";
 
