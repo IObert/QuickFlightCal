@@ -32,6 +32,9 @@ export default function RootLayout({
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         </body>
       </TooltipProvider>
+      <footer className="fixed bottom-0 w-full  p-4 text-center">
+        Made with ❤️ in Munich
+      </footer>
     </html>
   );
 }
