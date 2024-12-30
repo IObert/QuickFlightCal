@@ -2784,15 +2784,6 @@ export const routes = [
     duration: 560,
   },
   {
-    airline: "",
-    flightNumber: "",
-    departureAirport: "MUC",
-    departureTime: "NaN:undefined",
-    arrivalAirport: "Private Wings",
-    arrivalTime: "NaN:undefined",
-    duration: null,
-  },
-  {
     airline: "D328",
     flightNumber: "D328",
     departureAirport: "MUC",
