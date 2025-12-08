@@ -8,6 +8,7 @@ import { generateCalendarLinks } from "../utils/calendarLinks";
 import { parseFlightInfo } from "../utils/flightInfo";
 import { FlightInfo } from "../components/FlightInfo";
 import { CalendarIcon, CircleXIcon } from "lucide-react";
+import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
@@ -239,10 +240,17 @@ export default function FlightCalendarLinks() {
             <div key={index}>
               {/* @ts-ignore fix for nicer types later */}
               {flightInfo?.type === "PARSE_ERROR" ? (
-                <div className="bg-red-400 rounded-lg text-center p-4">
-                  {/* @ts-ignore fix for nicer types later */}
-                  {flightInfo.message}
-                </div>
+                <Link
+                  //  @ts-ignore fix for nicer types later
+                  href={flightInfo.link || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div className="bg-red-400 rounded-lg text-center p-4">
+                    {/* @ts-ignore fix for nicer types later */}
+                    <span className="text-white">{flightInfo.message}</span>
+                  </div>
+                </Link>
               ) : (
                 // @ts-ignore fix for nicer types later
                 <FlightInfo flightLeg={flightInfo} />
