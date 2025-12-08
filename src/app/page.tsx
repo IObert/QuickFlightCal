@@ -241,21 +241,7 @@ export default function FlightCalendarLinks() {
               {flightInfo?.type === "PARSE_ERROR" ? (
                 <div className="bg-red-400 rounded-lg text-center p-4">
                   {/* @ts-ignore fix for nicer types later */}
-                  {flightInfo.link ? (
-                    <a
-                      // @ts-ignore fix for nicer types later
-                      href={flightInfo.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-white underline"
-                    >
-                      {/* @ts-ignore fix for nicer types later */}
-                      {flightInfo.message}
-                    </a>
-                  ) : (
-                    // @ts-ignore fix for nicer types later
-                    <span className="text-white">{flightInfo.message}</span>
-                  )}
+                  {flightInfo.message}
                 </div>
               ) : (
                 // @ts-ignore fix for nicer types later

@@ -17,7 +17,6 @@ export interface FlightLeg {
 interface ParseError {
   type: "PARSE_ERROR";
   message: string;
-  link?: string;
 }
 
 export function parseFlightInfo(
@@ -41,11 +40,7 @@ export function parseFlightInfo(
   const route = routes.find((route) => route.flightNumber === flightNumber);
 
   if (!route)
-    return {
-      type: "PARSE_ERROR",
-      message: `Flight ${flightNumber} not found. Our database is still limited. Please open a issue on Github for your airline / flight number`,
-      link: "https://github.com/IObert/QuickFlightCal/issues",
-    };
+    return { type: "PARSE_ERROR", message: `Flight ${flightNumber} not found. Our database is still limited. Please open a issue on Github for your airline / flight number` };
 
   const [hours, minutes] = route.departureTime.split(":");
   const departureTime = addHours(
@@ -55,7 +50,7 @@ export function parseFlightInfo(
 
   const departeOnNextDay = date.getTime() > departureTime.getTime();
 
-  if (departeOnNextDay) {
+  if (departeOnNextDay){
     departureTime.setDate(departureTime.getDate() + 1);
   }
 
