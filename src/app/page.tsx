@@ -4,11 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { generateCalendarLinks } from "../utils/calendarLinks";
-import { parseFlightInfo } from "../utils/flightInfo";
-import { FlightInfo } from "../components/FlightInfo";
+import { FlightLoader } from "../components/FlightLoader";
 import { CalendarIcon, CircleXIcon } from "lucide-react";
-import Link from "next/link";
 import {
   Tooltip,
   TooltipContent,
@@ -22,7 +19,6 @@ import {
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { Separator } from "@/components/ui/separator";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface FormState {
@@ -43,41 +39,10 @@ export default function FlightCalendarLinks() {
   });
 
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const [flightInfos, setFlightInfos] = useState<
-    ReturnType<typeof parseFlightInfo>[]
-  >([]);
-  const [links, setLinks] = useState<ReturnType<
-    typeof generateCalendarLinks
-  > | null>(null);
+  const [showFlights, setShowFlights] = useState(false);
 
   const validateAndGenerateLinks = () => {
-    setFlightInfos([]);
-    setLinks(null);
-
-    const flightDate = formState.date;
-
-    let legStartDate = flightDate;
-    const newFlightInfos = formState.flightInputs
-      .filter((input) => input.trim() !== "")
-      .map((input) => {
-        const flightInfo = parseFlightInfo(input, legStartDate);
-        // @ts-ignore fix for nicer types later
-        if (flightInfo.type !== "PARSE_ERROR") {
-          // @ts-ignore fix for nicer types later
-          legStartDate = flightInfo.arrivalTime;
-        }
-        return flightInfo;
-      });
-
-    setFlightInfos(newFlightInfos);
-    // @ts-ignore fix for nicer types later
-    if (!newFlightInfos.some((flight) => flight?.type === "PARSE_ERROR")) {
-      // @ts-ignore fix for nicer types later
-      const newLinks = generateCalendarLinks(newFlightInfos);
-      setLinks(newLinks);
-    } else {
-      setLinks(null);
-    }
+    setShowFlights(true);
   };
 
   return (
@@ -233,61 +198,21 @@ export default function FlightCalendarLinks() {
         <Button className="w-full my-2" onClick={validateAndGenerateLinks}>
           Generate Links
         </Button>
-        {/* {error && <p className="text-red-500">{error}</p>} */}
-        {/* @ts-ignore invalid since null is catched */}
-        <div className="space-y-4">
-          {flightInfos.map((flightInfo, index) => (
-            <div key={index}>
-              {/* @ts-ignore fix for nicer types later */}
-              {flightInfo?.type === "PARSE_ERROR" ? (
-                <Link
-                  //  @ts-ignore fix for nicer types later
-                  href={flightInfo.link || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div className="bg-red-400 rounded-lg text-center p-4">
-                    {/* @ts-ignore fix for nicer types later */}
-                    <span className="text-white">{flightInfo.message}</span>
-                  </div>
-                </Link>
-              ) : (
-                // @ts-ignore fix for nicer types later
-                <FlightInfo flightLeg={flightInfo} />
-              )}
-            </div>
-          ))}
-        </div>
-        {links && (
-          <>
-            <Separator className="my-4" />
-            <div className="space-y-2">
-              <Button asChild className="w-full">
-                <a
-                  href={links.googleLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Add to Google Calendar
-                </a>
-              </Button>
-              <Button asChild className="w-full">
-                <a
-                  href={links.outlookLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Add to Outlook
-                </a>
-              </Button>
-              <Button asChild className="w-full">
-                <a href={links.icalLink} download="flight.ics">
-                  Download iCal/ICS
-                </a>
-              </Button>
-            </div>
-          </>
+        {showFlights && (
+          <div className="space-y-4">
+            {formState.flightInputs
+              .filter((input) => input.trim() !== "")
+              .map((input, index) => (
+                <div key={index}>
+                  <FlightLoader
+                    flightInput={input}
+                    flightDate={formState.date}
+                  />
+                </div>
+              ))}
+          </div>
         )}
+        {/* TODO: Calendar links will be re-enabled after proper async handling */}
       </div>
     </div>
   );

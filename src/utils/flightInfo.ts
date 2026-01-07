@@ -1,6 +1,7 @@
 import { addHours, parse, format, addMinutes } from "date-fns";
 import { de } from "date-fns/locale";
 import { routes } from "./routes";
+import { fetchFlightInfo } from "@/app/actions";
 
 export interface FlightLeg {
   airline: string;
@@ -20,10 +21,10 @@ interface ParseError {
   link?: string;
 }
 
-export function parseFlightInfo(
+export async function parseFlightInfo(
   flightNumber: string,
   date: Date
-): FlightLeg | ParseError {
+): Promise<FlightLeg | ParseError> {
   const regex = /^([A-Z]{2,3})(\d{1,4})$/;
 
   flightNumber = flightNumber.toUpperCase().replace(/\s/g, "");
@@ -43,37 +44,15 @@ export function parseFlightInfo(
 
   const [, airline, number] = match;
 
-  const route = routes.find((route) => route.flightNumber === flightNumber);
-
-  if (!route)
+  try {
+    const flighInfo = await fetchFlightInfo(flightNumber);
+    return flighInfo;
+  } catch (e) {
     return {
       type: "PARSE_ERROR",
-      message: `Flight ${flightNumber} not found. Our database is still limited. Please open a issue on Github for your airline / flight number`,
+      message: `Flight ${flightNumber} not found. Please open a issue on Github.`,
       link: "https://github.com/IObert/QuickFlightCal/issues",
     };
-
-  const [hours, minutes] = route.departureTime.split(":");
-  const departureTime = addHours(
-    addMinutes(UTCDate, parseInt(minutes)),
-    parseInt(hours)
-  );
-
-  const departeOnNextDay = date.getTime() > departureTime.getTime();
-
-  if (departeOnNextDay) {
-    departureTime.setDate(departureTime.getDate() + 1);
   }
 
-  const arrivalTime = addMinutes(departureTime, route.duration);
-
-  return {
-    airline,
-    flightNumber,
-    number: parseInt(number),
-    departureAirport: route.departureAirport,
-    arrivalAirport: route.arrivalAirport,
-    departureTime,
-    arrivalTime,
-    duration: route.duration,
-  };
 }
