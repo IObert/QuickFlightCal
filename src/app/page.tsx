@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FlightLoader } from "../components/FlightLoader";
+import { FlightSkeleton } from "../components/FlightSkeleton";
 import { CalendarIcon, CircleXIcon } from "lucide-react";
 import {
   Tooltip,
@@ -40,9 +41,11 @@ export default function FlightCalendarLinks() {
 
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [showFlights, setShowFlights] = useState(false);
+  const [generationKey, setGenerationKey] = useState(0);
 
   const validateAndGenerateLinks = () => {
     setShowFlights(true);
+    setGenerationKey((prev) => prev + 1);
   };
 
   return (
@@ -203,11 +206,13 @@ export default function FlightCalendarLinks() {
             {formState.flightInputs
               .filter((input) => input.trim() !== "")
               .map((input, index) => (
-                <div key={index}>
-                  <FlightLoader
-                    flightInput={input}
-                    flightDate={formState.date}
-                  />
+                <div key={`${generationKey}-${index}-${input}`}>
+                  <Suspense fallback={<FlightSkeleton />}>
+                    <FlightLoader
+                      flightInput={input}
+                      flightDate={formState.date}
+                    />
+                  </Suspense>
                 </div>
               ))}
           </div>

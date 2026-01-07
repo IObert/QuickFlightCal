@@ -46,8 +46,6 @@ async function attemptFetchFlightInfo(flightNumber: string) {
       `departure and arrival times (in UTC and ISO 8601 format), and duration in minutes.`,
   });
 
-  console.log(response.output_text);
-
   // Try to extract the first valid JSON object if multiple are concatenated
   let jsonText = response.output_text.trim();
   
