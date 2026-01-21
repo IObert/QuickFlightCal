@@ -3,9 +3,7 @@
 import { type FlightLeg } from "@/utils/flightInfo";
 import { FlightInfo } from "./FlightInfo";
 import { FlightSkeleton } from "./FlightSkeleton";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { fetchFlightInfo } from "@/app/actions";
 
 interface FlightLoaderProps {
   flightInput: string;
@@ -28,18 +26,38 @@ export function FlightLoader({
     async function fetchData() {
       setLoading(true);
 
-      fetchFlightInfo(flightInput, flightDate).then((data) => {
+      try {
+        const params = new URLSearchParams({
+          flightNumber: flightInput,
+          date: flightDate.toISOString(),
+        });
+
+        const response = await fetch(`/api/flight-info?${params.toString()}`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to fetch flight info');
+        }
+
         if (!cancelled) {
-          setFlightInfo(data);
+          // Convert ISO strings back to Date objects
+          const flightData: FlightLeg = {
+            ...data,
+            departureTime: new Date(data.departureTime),
+            arrivalTime: new Date(data.arrivalTime),
+          };
+          setFlightInfo(flightData);
           setLoading(false);
         }
-      }).catch((error) => {
+      } catch (error) {
         if (!cancelled) {
-          setFlightInfo({ type: "PARSE_ERROR", message: error.message });
+          setFlightInfo({ 
+            type: "PARSE_ERROR", 
+            message: error instanceof Error ? error.message : 'Unknown error'
+          });
           setLoading(false);
         }
-      });
-      
+      }
     }
 
     fetchData();
