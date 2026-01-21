@@ -1,17 +1,58 @@
-import { parseFlightInfo } from "@/utils/flightInfo";
+"use client";
+
+import { type FlightLeg } from "@/utils/flightInfo";
 import { FlightInfo } from "./FlightInfo";
+import { FlightSkeleton } from "./FlightSkeleton";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { fetchFlightInfo } from "@/app/actions";
 
 interface FlightLoaderProps {
   flightInput: string;
   flightDate: Date;
 }
 
-export async function FlightLoader({
+type FlightData = FlightLeg | { type: "PARSE_ERROR"; message: string; link?: string } | null;
+
+export function FlightLoader({
   flightInput,
   flightDate,
 }: FlightLoaderProps) {
-  const flightInfo = await parseFlightInfo(flightInput, flightDate);
+  const [flightInfo, setFlightInfo] = useState<FlightData>(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchData() {
+      setLoading(true);
+      console.log("Rendering flight info for:", flightInput, "on date:", flightDate);
+
+      fetchFlightInfo(flightInput, flightDate).then((data) => {
+        if (!cancelled) {
+          setFlightInfo(data);
+          setLoading(false);
+        }
+      }).catch((error) => {
+        if (!cancelled) {
+          setFlightInfo({ type: "PARSE_ERROR", message: error.message });
+          setLoading(false);
+        }
+      });
+      
+    }
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [flightInput, flightDate]);
+
+  if (loading) {
+    return <FlightSkeleton />;
+  }
 
   // @ts-ignore fix for nicer types later
   if (flightInfo?.type === "PARSE_ERROR") {
