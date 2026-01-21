@@ -97,6 +97,7 @@ export default function FlightCalendarLinks() {
                 <Calendar
                   mode="single"
                   selected={formState.date}
+                  className="[--cell-size:3rem] scale-130"
                   onSelect={(date) => {
                     const newParams = new URLSearchParams(
                       searchParams.toString()

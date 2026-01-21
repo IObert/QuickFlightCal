@@ -25,7 +25,7 @@ export function generateCalendarLinks(flightLegs: FlightLeg[]) {
     .join("\n\n");
 
   eventDescription +=
-    "\n\n\n\nGenerated with 💙 by QuickFlightCal ✈️ \n\n Generate calendar links for your flights";
+    "\n\n\n\nGenerated with 💙 by QuickFlightCal ✈️ \n\n https://quick-flight-cal.vercel.app";
 
   const googleLink = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
     eventTitle
