@@ -49,27 +49,28 @@ export default function FlightCalendarLinks() {
   };
 
   return (
-    <div className="container lg:my-16 my-8 mx-auto p-4 max-w-md pb-20">
-      <div
-        className="text-center mb-4 cursor-pointer"
-        onClick={() => {
-          setFormState({
-            date: new Date(),
-            flightInputs: [""],
-          });
-          router.push("/");
-        }}
-      >
-        <h1 className="text-2xl font-bold ">QuickFlightCal ✈️</h1>
-        <h2 className="text-lg text-gray-600">Add flights to your calendar in seconds</h2>
-      </div>
-      <div className="text-gray-700 my-10 bg-blue-50 border border-blue-200 p-4 rounded-lg">
-        <p className="font-medium mb-1">📋 How it works:</p>
-        <p className="text-sm">Enter your flight numbers and date below. We'll fetch the details and create calendar events you can save to Google, Apple, or Outlook.</p>
-      </div>
-      <div className="my-10">
-        <div className="my-2">
-          <Label htmlFor="date" className="text-base font-medium">Departure Date</Label>
+    <div className="min-h-screen w-full">
+      <div className="mx-auto w-full px-4 py-6 sm:px-6 sm:py-8 md:max-w-2xl md:px-8 lg:max-w-3xl lg:py-12 pb-20">
+        <div
+          className="text-center mb-6 sm:mb-8 cursor-pointer"
+          onClick={() => {
+            setFormState({
+              date: new Date(),
+              flightInputs: [""]
+            });
+            router.push("/");
+          }}
+        >
+          <h1 className="text-2xl sm:text-3xl font-bold">QuickFlightCal ✈️</h1>
+          <h2 className="text-base sm:text-lg text-gray-600 mt-1">Add flights to your calendar in seconds</h2>
+        </div>
+        <div className="text-gray-700 mb-6 sm:mb-8 bg-blue-50 border border-blue-200 p-4 sm:p-5 rounded-lg">
+          <p className="font-medium mb-2 text-sm sm:text-base">📋 How it works:</p>
+          <p className="text-xs sm:text-sm leading-relaxed">Enter your flight numbers and date below. We'll fetch the details and create calendar events you can save to Google, Apple, or Outlook.</p>
+        </div>
+        <div className="space-y-4 sm:space-y-5">
+          <div>
+            <Label htmlFor="date" className="text-sm sm:text-base font-medium">Departure Date</Label>
           <div>
             <Popover
               open={calendarOpen}
@@ -81,11 +82,11 @@ export default function FlightCalendarLinks() {
                 <Button
                   variant={"outline"}
                   className={cn(
-                    "w-full justify-start text-left font-normal",
+                    "w-full justify-start text-left font-normal h-11 sm:h-12 text-sm sm:text-base mt-1",
                     !formState.date && "text-muted-foreground"
                   )}
                 >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  <CalendarIcon className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                   {formState.date ? (
                     format(formState.date, "PPP")
                   ) : (
@@ -93,12 +94,12 @@ export default function FlightCalendarLinks() {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
+              <PopoverContent className="w-auto p-0" align="center">
                 <Calendar
                   mode="single"
                   selected={formState.date}
-                  className="[--cell-size:3rem] scale-130"
-                  onSelect={(date) => {
+                  className="scale-100 sm:scale-110"
+                  onSelect={(date: Date | undefined) => {
                     const newParams = new URLSearchParams(
                       searchParams.toString()
                     );
@@ -120,16 +121,17 @@ export default function FlightCalendarLinks() {
             </Popover>
           </div>
         </div>
-        {formState.flightInputs.map((input, index) => (
-          <div className="my-2" key={index}>
-            <Label htmlFor={`flight-${index}`} className="text-base font-medium">
-              Flight {index + 1}
-            </Label>
-            <div className="flex">
-              <Input
-                id={`flight-${index}`}
-                value={input}
-                onChange={(e) => {
+          {formState.flightInputs.map((input, index) => (
+            <div key={index}>
+              <Label htmlFor={`flight-${index}`} className="text-sm sm:text-base font-medium">
+                Flight {index + 1}
+              </Label>
+              <div className="flex gap-2 mt-1">
+                <Input
+                  id={`flight-${index}`}
+                  value={input}
+                  className="h-11 sm:h-12 text-sm sm:text-base"
+                  onChange={(e) => {
                   const newFlightInputs = [...formState.flightInputs];
                   newFlightInputs[index] = e.target.value;
                   const newParams = new URLSearchParams(
@@ -150,13 +152,13 @@ export default function FlightCalendarLinks() {
                 }}
                 placeholder="e.g., LH 458, UA 2345, BA 117"
               />
-              {index > 0 && (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      className="hover:text-red"
-                      variant="ghost"
-                      size="icon"
+                {index > 0 && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        className="hover:text-red min-w-[44px] h-11 sm:h-12 shrink-0"
+                        variant="ghost"
+                        size="icon"
                       onClick={() => {
                         const newFlightInputs = formState.flightInputs.filter(
                           (_, i) => i !== index
@@ -174,18 +176,18 @@ export default function FlightCalendarLinks() {
                       }}
                     >
                       <CircleXIcon />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Remove Flight</TooltipContent>
-                </Tooltip>
-              )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Remove Flight</TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-        <Button
-          className="w-full mt-6 mb-4"
-          variant="outline"
-          onClick={() => {
+          ))}
+          <Button
+            className="w-full h-11 sm:h-12 text-sm sm:text-base mt-2"
+            variant="outline"
+            onClick={() => {
             const newParams = new URLSearchParams(searchParams.toString());
             const flightInputs = [...formState.flightInputs];
             flightInputs.push("");
@@ -199,11 +201,11 @@ export default function FlightCalendarLinks() {
         >
           + Add Connecting Flight
         </Button>
-        <Button className="w-full my-2" onClick={validateAndGenerateLinks}>
+        <Button className="w-full h-11 sm:h-12 text-sm sm:text-base" onClick={validateAndGenerateLinks}>
           ✨ Get Calendar Events
         </Button>
-        {showFlights && (
-          <div className="space-y-4">
+          {showFlights && (
+            <div className="space-y-4 mt-6">
             {formState.flightInputs
               .filter((input) => input.trim() !== "")
               .map((input, index) => (
@@ -216,9 +218,10 @@ export default function FlightCalendarLinks() {
                   </Suspense>
                 </div>
               ))}
-          </div>
-        )}
-        {/* TODO: Calendar links will be re-enabled after proper async handling */}
+            </div>
+          )}
+          {/* TODO: Calendar links will be re-enabled after proper async handling */}
+        </div>
       </div>
     </div>
   );

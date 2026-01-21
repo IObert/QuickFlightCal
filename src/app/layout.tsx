@@ -21,17 +21,18 @@ export default function RootLayout({
     <html lang="en">
       <TooltipProvider>
         <body className={inter.className}>
-          <span className="absolute right-0 translate-x-20 rotate-45 top-0 py-2 text-xs px-20 my-4 bg-gray-500 text-white">
+          <div className="fixed bottom-0 right-[-25px] overflow-hidden w-40 h-40 z-50 pointer-events-none">
             <a
               target="_blank"
               href="https://github.com/IObert/QuickFlightCal/issues"
+              className="absolute bottom-8 -right-10 w-56 py-2.5 bg-gray-600 text-white text-center text-xs font-medium transform -rotate-45 shadow-md hover:bg-gray-700 transition-colors pointer-events-auto"
             >
-              Report issues
+              Report Issues
             </a>
-          </span>
+          </div>
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
           <footer className="w-full p-4 text-center text-gray-600 text-sm mt-8">
-            Made with ❤️ in Munich
+            Made with 💙 in Munich by <a target="_blank" href="https://iobert.me">Marius Obert</a>
           </footer>
         </body>
       </TooltipProvider>
