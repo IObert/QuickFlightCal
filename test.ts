@@ -17,7 +17,6 @@ import { z } from "zod";
 const FlightInfo = z.object({
   airline: z.string(),
   flightNumber: z.string(),
-  number: z.number(),
   departureAirport: z.string(),
   arrivalAirport: z.string(),
   departureTime: z.string().refine((date) => !isNaN(Date.parse(date)), {

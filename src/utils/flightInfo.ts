@@ -1,7 +1,6 @@
 export interface FlightLeg {
   airline: string;
   flightNumber: string;
-  number: number;
   departureAirport: string;
   arrivalAirport: string;
   departureTime: Date;

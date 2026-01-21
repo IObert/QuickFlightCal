@@ -27,7 +27,6 @@ export function FlightLoader({
 
     async function fetchData() {
       setLoading(true);
-      console.log("Rendering flight info for:", flightInput, "on date:", flightDate);
 
       fetchFlightInfo(flightInput, flightDate).then((data) => {
         if (!cancelled) {

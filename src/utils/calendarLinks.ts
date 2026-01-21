@@ -10,17 +10,19 @@ export function generateCalendarLinks(flightLegs: FlightLeg[]) {
   );
 
   const eventTitle = flightLegs
-    .map((leg) => `${leg.airline} ${leg.number}`)
+    .map((leg) => `${leg.flightNumber}`)
     .join(" + ");
   let eventDescription = flightLegs
     .map(
-      (leg) =>
-        `${leg.airline} ${leg.number}: ${leg.departureAirport} (${format(
+      (leg) => {
+        const flightTrackingLink = `https://www.flightaware.com/live/flight/${leg.flightNumber}`;
+        return `${leg.flightNumber}: ${leg.departureAirport} (${format(
           leg.departureTime,
           "HH:mm"
-        )}) to ${leg.arrivalAirport} (${format(leg.arrivalTime, "HH:mm")})`
+        )}) to ${leg.arrivalAirport} (${format(leg.arrivalTime, "HH:mm")})\n🔍 Track flight: ${flightTrackingLink}`;
+      }
     )
-    .join("\n");
+    .join("\n\n");
 
   eventDescription +=
     "\n\n\n\nGenerated with 💙 by QuickFlightCal ✈️ \n\n Generate calendar links for your flights";

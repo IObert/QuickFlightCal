@@ -8,7 +8,6 @@ import { z } from "zod";
 // {
 //     airline,
 //     flightNumber,
-//     number: parseInt(number),
 //     departureAirport: route.departureAirport,
 //     arrivalAirport: route.arrivalAirport,
 //     departureTime,
@@ -19,7 +18,6 @@ import { z } from "zod";
 const FlightInfo = z.object({
   airline: z.string(),
   flightNumber: z.string(),
-  number: z.number(),
   departureAirport: z.string(),
   arrivalAirport: z.string(),
   departureTime: z.string().refine((date) => !isNaN(Date.parse(date)), {
@@ -33,6 +31,16 @@ const FlightInfo = z.object({
 
 const openai = new OpenAI();
 
+function normalizeAirportCode(airport: string, fieldName: string): string {
+  const trimmed = airport.trim();
+  if (trimmed.length > 3) {
+    const capped = trimmed.substring(0, 3).toUpperCase();
+    console.warn(`⚠️ Airport code capped: ${fieldName} was "${airport}" -> "${capped}"`);
+    return capped;
+  }
+  return trimmed.toUpperCase();
+}
+
 async function attemptFetchFlightInfo(flightNumber: string, date: Date) {
   const response = await openai.responses.create({
     model: "gpt-5-nano",
@@ -42,7 +50,7 @@ async function attemptFetchFlightInfo(flightNumber: string, date: Date) {
     },
     input:
       `Fetch the flight information for flight number ${flightNumber} on date ${date.toISOString()}. ` +
-      `Provide the airline, flight number, departure and arrival airports, ` +
+      `Provide the airline, flight number, departure and arrival airports (MUST be 3-character IATA codes ONLY, e.g., 'FRA' not 'FRA (Frankfurt)'), ` +
       `departure and arrival times (in UTC and ISO 8601 format), and duration in minutes.`,
   });
 
@@ -58,6 +66,8 @@ async function attemptFetchFlightInfo(flightNumber: string, date: Date) {
       const parsed = FlightInfo.parse(JSON.parse(potentialJson));
       return {
         ...parsed,
+        departureAirport: normalizeAirportCode(parsed.departureAirport, 'departureAirport'),
+        arrivalAirport: normalizeAirportCode(parsed.arrivalAirport, 'arrivalAirport'),
         departureTime: new Date(parsed.departureTime),
         arrivalTime: new Date(parsed.arrivalTime)
       };
@@ -66,6 +76,8 @@ async function attemptFetchFlightInfo(flightNumber: string, date: Date) {
       const parsed = FlightInfo.parse(JSON.parse(jsonText));
       return {
         ...parsed,
+        departureAirport: normalizeAirportCode(parsed.departureAirport, 'departureAirport'),
+        arrivalAirport: normalizeAirportCode(parsed.arrivalAirport, 'arrivalAirport'),
         departureTime: new Date(parsed.departureTime),
         arrivalTime: new Date(parsed.arrivalTime)
       };
@@ -76,6 +88,8 @@ async function attemptFetchFlightInfo(flightNumber: string, date: Date) {
   const parsed = FlightInfo.parse(JSON.parse(jsonText));
   return {
     ...parsed,
+    departureAirport: normalizeAirportCode(parsed.departureAirport, 'departureAirport'),
+    arrivalAirport: normalizeAirportCode(parsed.arrivalAirport, 'arrivalAirport'),
     departureTime: new Date(parsed.departureTime),
     arrivalTime: new Date(parsed.arrivalTime)
   };

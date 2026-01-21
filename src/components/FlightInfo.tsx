@@ -11,7 +11,7 @@ export function FlightInfo({ flightLeg }: { flightLeg: FlightLeg }) {
   const handleICalDownload = () => {
     const element = document.createElement('a');
     element.setAttribute('href', icalLink);
-    element.setAttribute('download', `flight-${flightLeg.airline}-${flightLeg.number}.ics`);
+    element.setAttribute('download', `flight-${flightLeg.flightNumber}.ics`);
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
@@ -32,7 +32,7 @@ export function FlightInfo({ flightLeg }: { flightLeg: FlightLeg }) {
         </div>
         <div className="flex flex-col items-center">
           <span className="text-sm font-semibold">
-            {flightLeg.airline} {flightLeg.number}
+            {flightLeg.airline} {flightLeg.flightNumber}
           </span>
           <ArrowRight className="my-2" />
         </div>
