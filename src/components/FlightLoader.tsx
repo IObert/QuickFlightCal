@@ -57,17 +57,12 @@ export function FlightLoader({
   // @ts-ignore fix for nicer types later
   if (flightInfo?.type === "PARSE_ERROR") {
     return (
-      <Link
-        // @ts-ignore fix for nicer types later
-        href={flightInfo.link || "#"}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <div className="bg-red-400 rounded-lg text-center p-4">
-          {/* @ts-ignore fix for nicer types later */}
-          <span className="text-white">{flightInfo.message}</span>
-        </div>
-      </Link>
+      <div className="bg-red-50 border border-red-200 rounded-lg text-center p-4">
+        <p className="text-red-800 font-medium mb-1">❌ Unable to find flight</p>
+        <p className="text-red-600 text-sm">{/* @ts-ignore fix for nicer types later */}
+        {flightInfo.message}</p>
+        <p className="text-gray-600 text-xs mt-2">Please check the flight number and date</p>
+      </div>
     );
   }
 

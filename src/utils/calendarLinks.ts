@@ -1,4 +1,4 @@
-import { addMinutes, format } from "date-fns";
+import { format } from "date-fns";
 import { FlightLeg } from "./flightInfo";
 
 export function generateCalendarLinks(flightLegs: FlightLeg[]) {

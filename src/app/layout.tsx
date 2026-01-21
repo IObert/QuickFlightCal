@@ -30,7 +30,7 @@ export default function RootLayout({
             </a>
           </span>
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
-          <footer className="fixed bottom-0 w-full  p-4 text-center">
+          <footer className="w-full p-4 text-center text-gray-600 text-sm mt-8">
             Made with ❤️ in Munich
           </footer>
         </body>

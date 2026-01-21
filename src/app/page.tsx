@@ -49,7 +49,7 @@ export default function FlightCalendarLinks() {
   };
 
   return (
-    <div className="container lg:my-16 my-8 mx-auto p-4 max-w-md">
+    <div className="container lg:my-16 my-8 mx-auto p-4 max-w-md pb-20">
       <div
         className="text-center mb-4 cursor-pointer"
         onClick={() => {
@@ -61,15 +61,15 @@ export default function FlightCalendarLinks() {
         }}
       >
         <h1 className="text-2xl font-bold ">QuickFlightCal ✈️</h1>
-        <h2 className="text-lg">Generate calendar links for your flights</h2>
+        <h2 className="text-lg text-gray-600">Add flights to your calendar in seconds</h2>
       </div>
-      <div className="text-gray-600 my-10 bg-slate-300 p-2  rounded-md">
-        Enter your flight information to generate calendar links. You can also
-        add multiple flight legs.
+      <div className="text-gray-700 my-10 bg-blue-50 border border-blue-200 p-4 rounded-lg">
+        <p className="font-medium mb-1">📋 How it works:</p>
+        <p className="text-sm">Enter your flight numbers and date below. We'll fetch the details and create calendar events you can save to Google, Apple, or Outlook.</p>
       </div>
       <div className="my-10">
         <div className="my-2">
-          <Label htmlFor="date">Flight Date</Label>
+          <Label htmlFor="date" className="text-base font-medium">Departure Date</Label>
           <div>
             <Popover
               open={calendarOpen}
@@ -121,8 +121,8 @@ export default function FlightCalendarLinks() {
         </div>
         {formState.flightInputs.map((input, index) => (
           <div className="my-2" key={index}>
-            <Label htmlFor={`flight-${index}`}>
-              Flight Number (e.g., LH 458)
+            <Label htmlFor={`flight-${index}`} className="text-base font-medium">
+              Flight {index + 1}
             </Label>
             <div className="flex">
               <Input
@@ -147,7 +147,7 @@ export default function FlightCalendarLinks() {
                     validateAndGenerateLinks();
                   }
                 }}
-                placeholder="e.g. LH 458"
+                placeholder="e.g., LH 458, UA 2345, BA 117"
               />
               {index > 0 && (
                 <Tooltip>
@@ -182,7 +182,7 @@ export default function FlightCalendarLinks() {
           </div>
         ))}
         <Button
-          className="w-full mt-6 mb-4 "
+          className="w-full mt-6 mb-4"
           variant="outline"
           onClick={() => {
             const newParams = new URLSearchParams(searchParams.toString());
@@ -196,10 +196,10 @@ export default function FlightCalendarLinks() {
             });
           }}
         >
-          Add Another Flight
+          + Add Connecting Flight
         </Button>
         <Button className="w-full my-2" onClick={validateAndGenerateLinks}>
-          Generate Links
+          ✨ Get Calendar Events
         </Button>
         {showFlights && (
           <div className="space-y-4">
